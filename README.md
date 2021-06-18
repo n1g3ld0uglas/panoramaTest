@@ -127,7 +127,7 @@ spec:
       - name: cnx-pull-secret
       containers:
       - name: fw-integ
-        image: <IMAGE-PATH>
+        image: quay.io/tigera/firewall-integration:v3.4.1-pre.2
         imagePullPolicy: Always
         command: ["/controller"]
         env:
