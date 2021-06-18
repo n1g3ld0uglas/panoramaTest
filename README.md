@@ -101,3 +101,64 @@ subjects:
   name: firewall-integration-controller
   namespace: calico-monitoring
 ```
+
+Firewall Integration Manifest
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fw-integ
+  namespace: calico-monitoring
+  labels:
+    k8s-app: firewall-integration-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: firewall-integration-controller
+  template:
+    metadata:
+      labels:
+        k8s-app: firewall-integration-controller
+    spec:
+      serviceAccountName: firewall-integration-controller
+      imagePullSecrets:
+      - name: cnx-pull-secret
+      containers:
+      - name: fw-integ
+        image: <IMAGE-PATH>
+        imagePullPolicy: Always
+        command: ["/controller"]
+        env:
+        - name: FW_HOSTNAME
+          valueFrom:
+            configMapKeyRef:
+              name: fw-config
+              key: fw_hostname
+        - name: FW_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: fw-secret-config
+              key: fw_username
+        - name: FW_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: fw-secret-config
+              key: fw_password
+        - name: FW_DEVGROUP
+          valueFrom:
+            configMapKeyRef:
+              name: fw-config
+              key: fw_devicegroup
+        - name: FW_POLL_INTERVAL
+          value: "1m"
+        - name: Calico Enterprise_TIER_PREFIX
+          value: fw
+        - name: Calico Enterprise_NETWORK_PREFIX
+          value: panw
+        - name: Calico Enterprise_TIER_ORDER
+          value: "101"
+        - name: Calico Enterprise_PASS_TO_NEXT_TIER
+          value: "true"
+```
