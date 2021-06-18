@@ -1,5 +1,15 @@
 # panoramaTest
 
+
+Create a namespace
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: panorama-integration
+```
+
+Create a configMap
 ```
 kind: ConfigMap
 apiVersion: v1
@@ -11,6 +21,7 @@ data:
   fw_devicegroup: CalicoEnterprise
 ```  
 
+Create a secret
 ```
 kind: Secret
 apiVersion: v1
