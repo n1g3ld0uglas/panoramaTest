@@ -33,3 +33,71 @@ data:
   fw_username: ----
   fw_password: ----
 ```
+
+RBAC Config
+
+```
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: firewall-integration-controller
+  namespace: calico-monitoring
+---
+
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: firewall-integration-controller
+rules:
+  - apiGroups:
+      - "projectcalico.org"
+      - ""
+    resources:
+      - tiers
+      - globalnetworkpolicies
+      - tier.globalnetworkpolicies
+      - pods
+    verbs: ["*"]
+---
+
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: firewall-integration-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: firewall-integration-controller
+subjects:
+- kind: ServiceAccount
+  name: firewall-integration-controller
+  namespace: calico-monitoring
+---
+
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: firewall-integration-controller
+  namespace: calico-monitoring
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs: ["*"]
+---
+
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: firewall-integration-controller
+  namespace: calico-monitoring
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: firewall-integration-controller
+subjects:
+- kind: ServiceAccount
+  name: firewall-integration-controller
+  namespace: calico-monitoring
+```
