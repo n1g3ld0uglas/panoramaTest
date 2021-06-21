@@ -163,7 +163,7 @@ spec:
           value: "true"
 ```
 
-2nd Deployemtn
+2nd Deployment
 
 ```
 apiVersion: apps/v1
@@ -263,4 +263,17 @@ spec:
               - key: tigera.firewall.fortimgr
                 path: fortimgr-configs.yaml
             name: tigera-firewall-controller-configs
+```
+
+Final ConfigMap
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tigera-firewall-controller
+  namespace: panorama-integration
+data:
+  tigera.firewall.addressSelection: node
+  tigera.firewall.policy.selector: projectcalico.org/tier == 'panorama'
 ```
