@@ -23,15 +23,18 @@ Security rules allow an admin to create a rule specifying Source and Destination
 * In addition to zones, a rule can also include IP addresses (with CIDR) and a group of IP addresses defined as address-groups. <br/>
 However, IP address based rules are beyond the scope of this implementation.
 
-
+<p align="center">
 <img width="623" alt="Screenshot 2021-09-13 at 16 42 35" src="https://user-images.githubusercontent.com/82048393/133114786-9b23c7af-e0fc-4700-95b6-508711483ffc.png">
+</p>
 
 ### API admin user
 
 Next, create a user using the admin role created above. <br/>
 Note the username/password to be used during configuration on the Calico Enterprise side.
 
+<p align="center">
 <img width="623" alt="Screenshot 2021-09-13 at 16 44 57" src="https://user-images.githubusercontent.com/82048393/133115085-3d328b89-32d2-4a02-9795-bf2c19563866.png">
+</p>
 
 ### (Optionally) - create API key
 
@@ -43,12 +46,32 @@ $ curl -k -X POST 'https://<panorama-ip-adress-hostname>/api/?type=keygen&user=<
 <response status = 'success'><result><key>...API-Key...</key></result></response>%
 ```
 
-
 In the following sections, we will see how to configure Panorama and Calico Enterprise to set up a seamless synchronization of firewall security rules into Calico Enterprise network policies.
 
-
+<p align="center">
 ![structure](https://user-images.githubusercontent.com/82048393/133113711-3ad8cca4-3f85-4b0e-a61a-1a9e66cd2023.png)
+</p>
 
+## Zone Rules
+Security admin can come up with customized zone definitions and policies suitable for their deployment. <br/>
+Let’s look at a sample policy definition in Panorama. <br/>
+For our example, we are adding a Security Pre-Rule to block connection from zone dmz to backend when both source and destination port is 8080 under test1 device-group.
+
+### Rule name
+Add a rule-name. Other fields are optional.
+
+<p align="center">
+<img width="780" alt="Screenshot 2021-09-13 at 17 41 12" src="https://user-images.githubusercontent.com/82048393/133123584-8ab75fa8-191a-4632-a8af-93d529fa7b23.png">
+</p>
+
+### Source zone
+Click Add on the bottom-left to add zone(s), dmz.
+
+<p align="center">
+<img width="780" alt="Screenshot 2021-09-13 at 17 42 37" src="https://user-images.githubusercontent.com/82048393/133123725-ae39cabc-b420-4679-ac51-02f05f8b7894.png">
+</p>
+
+  
 ## Create a namespace
 ```
 apiVersion: v1
