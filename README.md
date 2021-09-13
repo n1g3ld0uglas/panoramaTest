@@ -321,6 +321,62 @@ If security-rules on Panorama are configured like the following:
 <img width="683" alt="Screenshot 2021-09-13 at 21 24 18" src="https://user-images.githubusercontent.com/82048393/133151391-26cb9be9-463d-46aa-b03b-4c8f506889a9.png">
 </p>
 
+Firewall Integration module reads and compresses into zone specific logic. <br/>
+This may mean that the rules for a particular zone spread across multiple security rules will be compressed together into one policy during compilation.<br/>
+<br/>
+The compilation process helps identify rules in terms of Ingress/Egress policy with respect to a zone which further simplifies translation into global network policy.
+
+<p align="center">
+<img width="645" alt="Screenshot 2021-09-13 at 21 30 32" src="https://user-images.githubusercontent.com/82048393/133152159-6192bb2e-ddb3-4c8b-aad6-6fb8c30d4d5c.png">
+</p>
+
+Policies are read in order, starting with --
+* Shared Pre-Rules
+* Device-Group Pre-Rules
+* Shared Post-Rules
+* Device-Group Post-Rules
+* Predefined Rules
+
+This is in confirmation to the Panorama rules order applicable to Firewall Integration use-case.<br/>
+<br/>
+Notice rule (4) & (7) in Panorama rules captured above. They are zones specific protocol, source/destination port rule definition. Take rule (4) for an example, it specifies source-zone dmz is allowed connection to destination-zone ‘interface’ over TCP port 443 only. Firewall integration reads service definition and adds this information to the compiled policy accordingly with respect to the Egress and Ingress flow for given zones.<br/>
+<br/>
+Predefined rules come as a factory installed on Panorama. These rules cannot be deleted but can be overridden. Firewall integration reads these inter-zone and intra-zone rules and adjusts network policies on Calico Enterprise accordingly.<br/>
+<br/>
+Here is a snapshot of the F/W tier on Calico Enterprise for above captured Panorama rules.
+
+<p align="center">
+<img width="617" alt="Screenshot 2021-09-13 at 21 34 57" src="https://user-images.githubusercontent.com/82048393/133152667-8b9eb6db-6d3b-4c88-a92c-4c77268cf44b.png">
+</p>
+
+Note the ‘Firewall Tier’, fw-test1 derived from Calico Enterprise_TIER_PREFIX and device-group configured. All the rules in the policy assumes that there are workloads in the kubernetes labeled with ‘zone’ key with values matching appropriate zone names, e.g. a workload with ‘zone = dmz’ label will follow Ingress/Egress rules in global network policy ‘panw-zone-dmz’. <br/>
+<br/>
+The last 3 policies in the ‘Firewall Tier’ are created for any workloads matching ‘zone’ labels but without a corresponding entry in Panorama security rules. Adding these rules are important to enforce Predefined policies in Panorama.<br/>
+<br/>
+Let’s look inside a policy to see how the rules look like:
+
+<p align="center">
+<img width="622" alt="Screenshot 2021-09-13 at 21 37 16" src="https://user-images.githubusercontent.com/82048393/133152953-da5483e5-91ba-4191-a89b-d63a972c3e3c.png">
+</p>
+
+# Important Points
+
+1. Panorama supports multi-level (up to 4) device-groups with common Shared hierarchy. <br/>
+Firewall Integration assumes the device-group configured is level 1 only. <br/>
+In other words, Firewall Integration will read security rules in Shared and given device-group alone.
+
+2. Firewall Integration module doesn’t authenticate Panorama certificate identity. <br/>
+This is an issue with vendor libraries being used. <br/>
+If your deployment requires certificate authentication, please reach out to us for a custom solution.
+
+3. If you make a change to Panorama configuration beyond security-rules, services or to security-rules, services belonging to a device-group not configured for Firewall Integration, the integration module will still treat it as a material configuration change. <br/>
+This is because a limitation in Panorama API doesn’t allow notifying for change in specific configuration object or device-group. <br/>
+This means, Firewall Integration module will be forced to re-read security-rules, services configuration for configured device-group whenever there is any change in Panorama configuration. <br/>
+Limitation in Panorama API forces Firewall Integration to check for any new configuration within or beyond device-group of interest.
+
+4. Network policy tier created and maintained by Firewall Integration module can be modified by a user with Network Admin role or a role allowed to write policies. <br/> However, these changes will be overwritten by GlobalNetworkPolicies by Firewall Integration after syncing every polling interval. <br/>
+For most practical deployment, we advise to add RBAC tiered policies limiting editing of the tier to Firewall Integration module only.
+
 
 ## 2nd Deployment
 
