@@ -49,7 +49,7 @@ $ curl -k -X POST 'https://<panorama-ip-adress-hostname>/api/?type=keygen&user=<
 In the following sections, we will see how to configure Panorama and Calico Enterprise to set up a seamless synchronization of firewall security rules into Calico Enterprise network policies.
 
 <p align="center">
-![structure](https://user-images.githubusercontent.com/82048393/133113711-3ad8cca4-3f85-4b0e-a61a-1a9e66cd2023.png)
+<img width="623" alt="Screenshot 2021-09-13 at 16 44 57" src="https://user-images.githubusercontent.com/82048393/133113711-3ad8cca4-3f85-4b0e-a61a-1a9e66cd2023.png">
 </p>
 
 ## Zone Rules
@@ -70,6 +70,40 @@ Click Add on the bottom-left to add zone(s), dmz.
 <p align="center">
 <img width="780" alt="Screenshot 2021-09-13 at 17 42 37" src="https://user-images.githubusercontent.com/82048393/133123725-ae39cabc-b420-4679-ac51-02f05f8b7894.png">
 </p>
+
+### Destination zone
+Make sure the top drop-down shows Select and then click Add to add destination zone(s), backend.
+
+<p align="center">
+<img width="777" alt="Screenshot 2021-09-13 at 17 48 32" src="https://user-images.githubusercontent.com/82048393/133124535-afce3598-bc0f-48e8-bca5-db343408b8af.png">
+</p>
+
+### Service
+Navigate to ```Object``` > ```Services``` to add a service definition under the same device-group, test1. <br/>
+NOTE: The source-port is optional and the protocol is TCP, by default. Set source/destination port to 8080.
+
+<p align="center">
+<img width="776" alt="Screenshot 2021-09-13 at 17 50 33" src="https://user-images.githubusercontent.com/82048393/133124765-d9c7be6c-45b7-4787-b4c7-e82f3a54e5ff.png">
+</p>
+
+Make sure that the drop-down shows select under Service/URL category in rule definition before adding the newly created service.
+
+<p align="center">
+<img width="780" alt="Screenshot 2021-09-13 at 17 51 36" src="https://user-images.githubusercontent.com/82048393/133124890-74dbdc74-249f-4bac-ba43-c0f35f96ec0c.png">
+</p>
+
+### Action
+Set action to ```Block``` under Action Settings.
+
+<img width="780" alt="Screenshot 2021-09-13 at 17 54 51" src="https://user-images.githubusercontent.com/82048393/133125365-cb9f99f0-c408-411c-92ef-f3c52077448b.png">
+
+All other settings in the policy rule definition are optional and are beyond the scope of this integration module.
+
+# Calico Enterprise Configuration
+
+Firewall Integration module on Calico Enterprise runs as a kubernetes deployment that compiles and periodically synchronizes security policy rules from Panorama to Calico Enterprise network policies. The module supports configuration options to specify Panorama and Calico Enterprise specific settings.
+
+
 
   
 ## Create a namespace
