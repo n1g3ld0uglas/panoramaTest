@@ -95,7 +95,9 @@ Make sure that the drop-down shows select under Service/URL category in rule def
 ### Action
 Set action to ```Block``` under Action Settings.
 
+<p align="center">
 <img width="780" alt="Screenshot 2021-09-13 at 17 54 51" src="https://user-images.githubusercontent.com/82048393/133125365-cb9f99f0-c408-411c-92ef-f3c52077448b.png">
+</p>
 
 All other settings in the policy rule definition are optional and are beyond the scope of this integration module.
 
@@ -103,43 +105,57 @@ All other settings in the policy rule definition are optional and are beyond the
 
 Firewall Integration module on Calico Enterprise runs as a kubernetes deployment that compiles and periodically synchronizes security policy rules from Panorama to Calico Enterprise network policies. The module supports configuration options to specify Panorama and Calico Enterprise specific settings.
 
-
-
   
-## Create a namespace
+# Panorama configuarion
 ```
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: panorama-integration
+  name: calico-monitoring
 ```
 
-## Create a configMap
+## Hostname & Device-group
+
+Hostname can be specified as an IP Address or FQDN. Firewall Integration currently supports only 1 Device-group at a time. <br/> 
+Corresponding configuration is FW_HOSTNAME & FW_DEVGROUP, respectively. <br/> 
+Both the settings are mandatory and can be specified as a ConfigMap, as mentioned below:
+
 ```
 kind: ConfigMap
 apiVersion: v1
 metadata:
   name: fw-config
-  namespace: panorama-integration
+  namespace: calico-monitoring
 data:
-  fw_hostname: ip-10-0-0-87.ec2.internal
-  fw_devicegroup: CalicoEnterprise
+  fw_hostname: <Panorama-Device-IP>
+  fw_devicegroup: <Panorama-Device-Group>
 ```  
 
-## Create a secret
+## Username/Password or API Key
+
+While credentials (username/password, APIKey) can be specified as ConfigMap. Standard k8s practise dictates using Secret resource to specify such configuration. Firewall Integration relies on underlying kubernetes setup for security-at-rest for these configuration items. These values are interpreted as FW_USERNAME, FW_PASSWORD & FW_APIKEY configuration options in the Firewall Integration module. Here is an example of Secret config. These are required items.
+
 ```
 kind: Secret
 apiVersion: v1
 type: Opaque
 metadata:
   name: fw-secret-config
-  namespace: panorama-integration
+  namespace: calico-monitoring
 data:
-  fw_username: ----
-  fw_password: ----
+  fw_username: NDBndNDlnd== (fake username)
+  fw_password: NDBndNDlndNDc3N3b3ND (fake pw)
 ```
 
-## RBAC Config
+## Firewall Polling Interval (time)
+
+Configuration setting FW_POLL_INTERVAL specifies the interval to read security rules from Panorama and create policies in Calico Enterprise. The default value for this configuration is 10 minutes. We suggest using a value that doesn’t overwhelm Panorama connectivity while keeping the policy enforcement in check and timely.
+
+
+# RBAC Configuarion
+
+Firewall Integration honors standard Kubernetes RBAC configuration. <br/> 
+This means in order to work with Calico Enterprise resources, a service-account and corresponding role, bindings are needed:
 
 ```
 apiVersion: v1
@@ -206,6 +222,16 @@ subjects:
   name: firewall-integration-controller
   namespace: calico-monitoring
 ```
+
+# Calico Enterprise Configuration:
+Firewall Integration provides Calico Enterprise specific configurations. <br/>
+Following is a list of options with brief description:
+
+## Calico Enterprise_TIER_PREFIX (string):
+Panorama policies are read and compiled into global network policies. <br/>
+All these global network policies are stored in a single tier. <br/>
+This tier name is derived from Prefix setting and device-group name. <br/> 
+It’s not a required setting and defaults to fw.
 
 ## Firewall Integration Manifest
 
