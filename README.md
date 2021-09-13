@@ -233,6 +233,19 @@ All these global network policies are stored in a single tier. <br/>
 This tier name is derived from Prefix setting and device-group name. <br/> 
 It’s not a required setting and defaults to fw.
 
+## Calico Enterprise_NETWORK_PREFIX (string)
+Panorama security rules are compiled into per-zone level global network policies for each zone mentioned in the rules. <br/>
+Name of such a global network policy is derived from Network prefix and zone-name. It’s not a required setting and defaults to ```panw```.
+
+## Calico Enterprise_TIER_ORDER (number)
+Each network policy tier in Calico Enterprise has a corresponding order. This setting allows you to specify the order of the policy tier. It defaults to 101 or immediately after allow-cnx which is a default first tier in Calico Enterprise.
+
+## Calico Enterprise_PASS_TO_NEXT_TIER (bool)
+All zone specific rules are contained to the tier, populated and synchronized by Firewall Integration module. <br/> 
+If Calico Enterprise admin plans to add rules beyond this tier, the integration tier has to add a pass rule to handover policy decisions to the next tier. <br/>
+This configuration is off by default, meaning Zone based network policies are container to the integration tier.
+
+
 ## Firewall Integration Manifest
 
 ```
@@ -293,6 +306,21 @@ spec:
         - name: Calico Enterprise_PASS_TO_NEXT_TIER
           value: "true"
 ```
+
+## etcd/KDD Datastore Support
+Firewall Integration module supports both etcd and KDD mode of Kubernetes deployment. </br>
+When using a seperate etcd as Kubernetes data-store, you can specify corresponding configuration using Calico Enterprise standard configuration options.
+
+# Understanding Security Rules to Policy Translation
+Let’s look at an example to understand how zone-based security-rules in Panorama translate into Calico Enterprise Global Network Policies.<br/>
+<br/>
+If security-rules on Panorama are configured like the following:
+
+
+<p align="center">
+<img width="683" alt="Screenshot 2021-09-13 at 21 24 18" src="https://user-images.githubusercontent.com/82048393/133151391-26cb9be9-463d-46aa-b03b-4c8f506889a9.png">
+</p>
+
 
 ## 2nd Deployment
 
