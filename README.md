@@ -12,20 +12,42 @@ First, we need a user with API access to Panorama. <br/>
 While admin user or any other super-user role user can be used, we strongly advise in favor of using a separate account with only API access.
 
 ### API admin role
-Create an admin-role with access to only XML API enabled. <br/>
+* Create an admin-role with access to only XML API enabled. <br/>
 We suggest disabling Web UI/Command Line access.
 
-For network-security enforcements, Palo Alto Firewalls use Zone-based policies. Zones are network segmentation constructs. <br/> 
-To define communication policies between zones, Panorama supports Security Rules. Security rules allow an admin to create a rule specifying Source and Destination zones associated with a Service (protocol, port) definition and an Action (allow/deny) to take in case of match. <br/>
-These rules enforce stateful policies between the traffic zones. <br/>
-In addition to zones, a rule can also include IP addresses (with CIDR) and a group of IP addresses defined as address-groups. <br/>
+* For network-security enforcements, Palo Alto Firewalls use Zone-based policies. <br/>
+Zones are network segmentation constructs.
+* To define communication policies between zones, Panorama supports Security Rules. <br/>
+Security rules allow an admin to create a rule specifying Source and Destination zones associated with a Service (protocol, port) definition and an Action (allow/deny) to take in case of match. <br/>
+* These rules enforce stateful policies between the traffic zones. <br/>
+* In addition to zones, a rule can also include IP addresses (with CIDR) and a group of IP addresses defined as address-groups. <br/>
 However, IP address based rules are beyond the scope of this implementation.
 
-![structure](https://user-images.githubusercontent.com/82048393/133113711-3ad8cca4-3f85-4b0e-a61a-1a9e66cd2023.png)
+
+<img width="623" alt="Screenshot 2021-09-13 at 16 42 35" src="https://user-images.githubusercontent.com/82048393/133114786-9b23c7af-e0fc-4700-95b6-508711483ffc.png">
+
+### API admin user
+
+Next, create a user using the admin role created above. <br/>
+Note the username/password to be used during configuration on the Calico Enterprise side.
+
+<img width="623" alt="Screenshot 2021-09-13 at 16 44 57" src="https://user-images.githubusercontent.com/82048393/133115085-3d328b89-32d2-4a02-9795-bf2c19563866.png">
+
+### (Optionally) - create API key
+
+Create API key for Panorama configuration to be used in XML-API. This step is optional because the Calico Enterprise Firewall Integration module can work with username/password or APIKey. As there is no APIKey revocation interface in Panorama, invalidating API Key, in case of a compromise, can mean deleting the user altogether. We leave it to the security posture of given deployment to use either username/password or API Key. <br/>
+
+```
+$ curl -k -X POST 'https://<panorama-ip-adress-hostname>/api/?type=keygen&user=<username>&password=<password>'
+
+<response status = 'success'><result><key>...API-Key...</key></result></response>%
+```
 
 
 In the following sections, we will see how to configure Panorama and Calico Enterprise to set up a seamless synchronization of firewall security rules into Calico Enterprise network policies.
 
+
+![structure](https://user-images.githubusercontent.com/82048393/133113711-3ad8cca4-3f85-4b0e-a61a-1a9e66cd2023.png)
 
 ## Create a namespace
 ```
