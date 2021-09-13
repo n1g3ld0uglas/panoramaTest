@@ -1,7 +1,20 @@
-# panoramaTest
+# Calico Enterprise - Panorama Firewall Integration
+
+Panorama is a management interface for configuring Palo Alto Networks Next-Generation Firewall (NGFW). <br/>
+It supports Device-Groups for easier management of multiple firewall deployments.
+
+![Panorama-Diagram](https://user-images.githubusercontent.com/82048393/133112762-49429e0c-51cf-4bc2-9d02-a3fd2396a5fd.png)
+
+## User Configuration
+First, we need a user with API access to Panorama. <br/>
+While admin user or any other super-user role user can be used, we strongly advise in favor of using a separate account with only API access.
+
+### API admin role
+Create an admin-role with access to only XML API enabled. <br/>
+We suggest disabling Web UI/Command Line access.
 
 
-Create a namespace
+## Create a namespace
 ```
 apiVersion: v1
 kind: Namespace
@@ -9,7 +22,7 @@ metadata:
   name: panorama-integration
 ```
 
-Create a configMap
+## Create a configMap
 ```
 kind: ConfigMap
 apiVersion: v1
@@ -21,7 +34,7 @@ data:
   fw_devicegroup: CalicoEnterprise
 ```  
 
-Create a secret
+## Create a secret
 ```
 kind: Secret
 apiVersion: v1
@@ -34,7 +47,7 @@ data:
   fw_password: ----
 ```
 
-RBAC Config
+## RBAC Config
 
 ```
 apiVersion: v1
