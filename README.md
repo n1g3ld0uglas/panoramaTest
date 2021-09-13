@@ -133,7 +133,11 @@ data:
 
 ## Username/Password or API Key
 
-While credentials (username/password, APIKey) can be specified as ConfigMap. Standard k8s practise dictates using Secret resource to specify such configuration. Firewall Integration relies on underlying kubernetes setup for security-at-rest for these configuration items. These values are interpreted as FW_USERNAME, FW_PASSWORD & FW_APIKEY configuration options in the Firewall Integration module. Here is an example of Secret config. These are required items.
+While credentials (username/password, APIKey) can be specified as ConfigMap. <br/>
+Standard k8s practise dictates using Secret resource to specify such configuration. <br/>
+Firewall Integration relies on underlying kubernetes setup for security-at-rest for these configuration items. <br/>
+These values are interpreted as FW_USERNAME, FW_PASSWORD & FW_APIKEY configuration options in the Firewall Integration module. <br/>
+Here is an example of Secret config with all required items.
 
 ```
 kind: Secret
@@ -149,7 +153,8 @@ data:
 
 ## Firewall Polling Interval (time)
 
-Configuration setting FW_POLL_INTERVAL specifies the interval to read security rules from Panorama and create policies in Calico Enterprise. The default value for this configuration is 10 minutes. We suggest using a value that doesn’t overwhelm Panorama connectivity while keeping the policy enforcement in check and timely.
+Configuration setting FW_POLL_INTERVAL specifies the interval to read security rules from Panorama and create policies in Calico Enterprise. <br/>
+The default value for this configuration is 10 minutes. We suggest using a value that doesn’t overwhelm Panorama connectivity while keeping the policy enforcement in check and timely.
 
 
 # RBAC Configuarion
@@ -238,11 +243,13 @@ Panorama security rules are compiled into per-zone level global network policies
 Name of such a global network policy is derived from Network prefix and zone-name. It’s not a required setting and defaults to ```panw```.
 
 ## Calico Enterprise_TIER_ORDER (number)
-Each network policy tier in Calico Enterprise has a corresponding order. This setting allows you to specify the order of the policy tier. It defaults to 101 or immediately after allow-cnx which is a default first tier in Calico Enterprise.
+Each network policy tier in Calico Enterprise has a corresponding order. <br/>
+This setting allows you to specify the order of the policy tier. <br/>
+It defaults to 101 or immediately after allow-cnx which is a default first tier in Calico Enterprise.
 
 ## Calico Enterprise_PASS_TO_NEXT_TIER (bool)
 All zone specific rules are contained to the tier, populated and synchronized by Firewall Integration module. <br/> 
-If Calico Enterprise admin plans to add rules beyond this tier, the integration tier has to add a pass rule to handover policy decisions to the next tier. <br/>
+If Calico admin plans to add rules beyond this tier, the integration tier has to add a pass rule to handover policy decisions to the next tier. <br/>
 This configuration is off by default, meaning Zone based network policies are container to the integration tier.
 
 
@@ -378,7 +385,14 @@ Limitation in Panorama API forces Firewall Integration to check for any new conf
 For most practical deployment, we advise to add RBAC tiered policies limiting editing of the tier to Firewall Integration module only.
 
 
-## 2nd Deployment
+# Panorama Overview:
+Panorama provides centralised management and reporting functionality for multiple firewalls within an environment. <br/>
+Accessible from a very similar GUI to a standalone firewall, there are a few key differences on a panorama versus a firewall, notably the addition of a tab called panorama.
+
+<p align="center">
+<img width="622" alt="Screenshot 2021-09-13 at 21 57 12" src="https://user-images.githubusercontent.com/82048393/133155460-224acd8e-ac2b-421b-a05c-9da7953ff57c.png">
+</p>
+
 
 ```
 apiVersion: apps/v1
