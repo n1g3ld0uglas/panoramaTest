@@ -393,6 +393,32 @@ Accessible from a very similar GUI to a standalone firewall, there are a few key
 <img width="622" alt="Screenshot 2021-09-13 at 21 57 12" src="https://user-images.githubusercontent.com/82048393/133155460-224acd8e-ac2b-421b-a05c-9da7953ff57c.png">
 </p>
 
+## Accessing the API browser
+All PAN firewalls have an inbuilt API browser you can use to identify the correct request type you are trying to utilise. <br/>
+To access the browser, navigate to https: firewall address / api 
+
+![Screenshot 2021-09-14 at 09 21 47](https://user-images.githubusercontent.com/82048393/133222508-0622ba42-20d5-40cb-ba21-d076417ac0b9.png)
+
+For further information the following whitepaper breaks down the API functionality. <br/>
+https://docs.paloaltonetworks.com/pan-os/7-1/pan-os-panorama-api/get-started-with-the-pan-os-xml-api/explore-the-api
+
+## Pushing changes to firewalls
+Panorama appliances will push changes down to each firewall via a process called Commit. During this time, the config from a panorama device is pushed down to each firewall selected as part of the commit. All firewalls or select firewalls can receive updates depending on what the administrator has configured and this process can be called via the API also. 
+
+![Screenshot 2021-09-14 at 09 23 54](https://user-images.githubusercontent.com/82048393/133222806-e78615ea-c670-4048-939b-e3b81023f221.png)
+
+## Device Groups
+Panorama allows firewalls to be split into logical units called device groups.<br/>
+<br/>
+A device group enables management of both the rules themselves and objects used within rules, based on network segmentation, geographic location, organizational function, or any other common aspect of firewalls. It is normally recommended to organize device groups hierarchically, with shared rules and objects at the top, and device group-specific rules and objects at subsequent levels. This enables you to create a hierarchy of rules that enforce how firewalls handle traffic.<br/>
+<br/>
+Panorama device groups are used to manage items within the policies and objects tabs of firewalls. There are many locations in the device group hierarchy where policy and objects can be configured. The configuration applied to the local device is an aggregation of all hierarchy levels which can lead to the potential of inconsistent configuration and duplicate object creation. In the case where an object or policy with the same name is created in multiple locations of the hierarchy, the default Panorama behavior is that the object that is closest to the device (descendent) will take precedence.<br/>
+<br/>
+It's very important to take the ancestor and descendent relationship of the device groups in a hierarchy into consideration when making changes to a panorama rulebase. Adding an object or rule to the wrong location can lead to traffic not behaving as intended. <br/>
+<br/>
+Hierarchies are commonly displayed in the following format in documentation:
+
+  
 
 ```
 apiVersion: apps/v1
