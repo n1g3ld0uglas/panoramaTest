@@ -147,8 +147,8 @@ metadata:
   name: fw-secret-config
   namespace: calico-monitoring
 data:
-  fw_username: NDBndNDlnd== (fake username)
-  fw_password: NDBndNDlndNDc3N3b3ND (fake pw)
+  fw_username: NDBndNDlnd== (base64 username)
+  fw_password: NDBndNDlndNDc3N3b3ND (base64 pw)
 ```
 
 ## Firewall Polling Interval (time)
